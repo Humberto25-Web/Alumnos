@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/8700b1bcd8.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+    <title>CRUD en FireBase</title>
+</head>
+<style>
+    .conteiner {
+        text-align: center;
+        overflow: hidden;
+
+    }
+
+    .divInputs {
+        width: 300px;
+        padding: 10px;
+        margin: 10px;
+
+    }
+
+    .tablasDatos {
+        text-align: center;
+        width: 400px;
+        margin: 1em;
+        padding: 1em;
+        float: left;
+    }
+
+    h1 {
+        text-align: center;
+        color: deepskyblue;
+    }
+</style>
+
+<body id="allHtml">
+    <h1>CRUD JavaScript y Firebase</h1>
+    <div class="conteiner">
+        <div class="tablasDatos">
+            <h3>Formulario de Alumnos.</h3>
+            <form name="form1">
+                <input type="text" id="matricula" placeholder="Matricula" class="form-control my-3">
+                <input type="text" id="nombre" placeholder="Nombre" class="form-control my-3">
+                <input type="text" id="edad" placeholder="Edad" class="form-control my-3">
+                <input type="text" id="promedio" placeholder="Promedio" class="form-control my-3">
+                <p class="font-weight-bold" style="text-align: left;">Sexo:</p>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <input type="radio" name="sexo" value="Hombre"
+                                aria-label="Radio button for following text input">Hombre
+                        </div>
+                    </div>
+                </div><br>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <input type="radio" name="sexo" value="Mujer"
+                                aria-label="Radio button for following text input">Mujer
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="btnGuardar" onclick="guardar();" type="reset">Guardar
+                    Registro</button>
+
+            </form><br><br>
+            
+            <button class="btn btn-outline-info" onclick="pdf()">Generar Reporte PDF</button><br><br>
+            
+            <div class="gTotales" >
+                <h4>Grafica de Alumnos</h4>
+                <canvas style="border: 2px solid red; width: 350px; height: 200px;" id="graficaTotales">Tu navegador no es
+                    conmpatible</canvas>
+            </div>
+            <div class="gPromedio" >
+                <h4>Grafica de Promedios</h4>
+                <canvas style="border: 2px solid red; width: 350px; height: 200px;" id="graficaPromedios">Tu navegador no es
+                    conmpatible</canvas>
+            </div>
+        </div>
+
+        <div class="tablasDatos" >
+            <div class="buscar" style="display: inline-block;">
+                <input type="text" id="buscar" placeholder="Ingresa el nombre o ID" class="form-control">
+            </div>
+            <div class="divBotonBuscar" style="display: inline-block;text-align: center;">
+                <button class="btn btn-success" id="btnBuscar" onclick="buscar();" type="reset"><span><i
+                            class="fas fa-search"></i></span></button>
+                <button class="btn btn-info" id="actualizar" onclick="actualizar();"><span><i
+                            class="fas fa-undo-alt"></i></span></button>
+            </div>
+            <h3 style="margin-left: 170px;">Tabla Hombres</h3>
+            <table class="table" my-3>
+                <thead class="thead-light">
+
+                    <tr>
+
+                        <th scope="col">Matricula</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Edad</th>
+                        <th scope="col">Sexo</th>
+                        <th scope="col">Promedio</th>
+                        <th scope="col">Eliminar</th>
+                        <th scope="col">Modificar</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaHombres">
+                </tbody>
+            </table>
+            <div style="border: 2px solid blue; text-align: left;">
+                <p class="font-weight-bold" id="totalHombres"></p>
+                <p class="font-weight-bold" id="promedioHombres"></p>
+            </div>
+            
+        </div>
+
+
+        <div class="tablasDatos" >
+            <h3 style="margin-left: 170px;">Tabla Mujeres</h3>
+            <table class="table" my-3>
+                <thead class="thead-light">
+
+                    <tr>
+
+                        <th scope="col">Matricula</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Edad</th>
+                        <th scope="col">Sexo</th>
+                        <th scope="col">Promedio</th>
+                        <th scope="col">Eliminar</th>
+                        <th scope="col">Modificar</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaMujeres">
+                </tbody>
+            </table>
+            <div style="border: 2px solid blue;text-align: left;">
+                <p class="font-weight-bold" id="totalM"></p>
+                <p class="font-weight-bold" id="promM"></p>
+            </div>
+            <div style="text-align: left;">
+                <p class="font-weight-bold" id="prom"></p>
+                <p class="font-weight-bold" id="total"></p>
+            </div>
+             
+            
+        </div>
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+
+
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-firestore.js"></script>
+
+    <script src="index.js"></script>
+
+</body>
+
+</html>
